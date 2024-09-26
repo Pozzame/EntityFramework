@@ -52,9 +52,10 @@ class View
         Console.WriteLine("4. Modifica user");
         Console.WriteLine("5. Elimina user");
         Console.WriteLine("6. Toggle user");;
-        Console.WriteLine("7. Visualizza tipi di abbonamento");;
+        Console.WriteLine("7. Visualizza tipi di abbonamento");
         Console.WriteLine("8. Crea nuovo tipo di abbonamento");
-        Console.WriteLine("9. Esci");
+        Console.WriteLine("9. Elimina tipo di abbonamento");
+        Console.WriteLine("10. Esci");
     }
 
     public void ShowUsers(List<User> users, bool enable)
@@ -141,8 +142,32 @@ class Controller
             }
             else if (input == "9")
             {
+                DeleteAbbonamento();
+            }
+            else if (input == "10")
+            {
                 break;
             }
+        }
+    }
+
+    private void DeleteAbbonamento()
+    {
+        Console.WriteLine("Enter Abbonamento name");
+        var name = _view.GeInput();
+        Abbonamento AbbToDelete = null;
+        foreach(var abb in _db.Abbonamenti)
+        {
+            if(abb.Name == name)
+            {
+                AbbToDelete = abb;
+                break;
+            }
+        }
+        if(AbbToDelete != null)
+        {
+            _db.Abbonamenti.Remove(AbbToDelete);
+            _db.SaveChanges();
         }
     }
 
