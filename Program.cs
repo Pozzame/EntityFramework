@@ -100,7 +100,7 @@ class View
     internal void ShowTransazioni(List<Transazione> transazioni)
     {
         foreach(var item in transazioni)
-            Console.WriteLine($"ID:\t{item.Id}\tName:\t{item.Data}\tUser:\t{item.User.Name}\tType:\t{item.Type.Name}");
+            Console.WriteLine($"ID:\t{item.Id}\tData:\t{item.Data}\tUser:\t{item.User.Name}\tType:\t{item.Type.Name}");
     }
 }
 
