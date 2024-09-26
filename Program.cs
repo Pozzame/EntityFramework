@@ -99,6 +99,8 @@ class View
 
     internal void ShowTransazioni(List<Transazione> transazioni)
     {
+        _db.Abbonamenti.ToList();
+        _db.Users.ToList();
         foreach(var item in transazioni)
             Console.WriteLine($"ID:\t{item.Id}\tData:\t{item.Data}\tUser:\t{item.User.Name}\tType:\t{item.Type.Name}");
     }
