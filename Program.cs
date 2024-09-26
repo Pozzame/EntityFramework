@@ -17,6 +17,7 @@ class User
 {
     public int Id { get; set; }
     public string? Name { get; set; }
+    public bool Enable { get; set; }
 }
 
 class Database : DbContext
@@ -41,13 +42,15 @@ class View
         Console.WriteLine("2. Leggi user");
         Console.WriteLine("3. Modifica user");
         Console.WriteLine("4. Elimina user");
-        Console.WriteLine("5. Esci");
+        Console.WriteLine("5. Toggle user");
+        Console.WriteLine("6. Esci");
     }
 
     public void ShowUsers(List<User> users)
     {
         foreach(var user in users)
-            Console.WriteLine(user.Name);
+            if (user.Enable)
+                Console.WriteLine(user.Name);
     }
     public string GeInput()
     {
@@ -89,6 +92,10 @@ class Controller
             }
             else if (input == "5")
             {
+                ToggleUser();
+            }
+            else if (input == "6")
+            {
                 break;
             }
         }
@@ -97,7 +104,7 @@ class Controller
     {
         Console.WriteLine("Enter user name");
         var name = _view.GeInput();
-        _db.Users.Add(new User { Name = name});
+        _db.Users.Add(new User { Name = name, Enable = true});
         _db.SaveChanges();
     }
     private void ShowUser()
@@ -143,6 +150,25 @@ class Controller
         if(UserToDelete != null)
         {
             _db.Users.Remove(UserToDelete);
+            _db.SaveChanges();
+        }
+    }
+    private void ToggleUser()
+    {
+        Console.WriteLine("Enter user name");
+        var name = _view.GeInput();
+        User UserToToggle = null;
+        foreach(var user in _db.Users)
+        {
+            if(user.Name == name)
+            {
+                UserToToggle = user;
+                break;
+            }
+        }
+        if(UserToToggle != null)
+        {
+            UserToToggle.Enable=!UserToToggle.Enable;
             _db.SaveChanges();
         }
     }
