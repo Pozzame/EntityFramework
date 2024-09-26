@@ -27,10 +27,19 @@ class Abbonamento
     public decimal Price { get; set; }
 }
 
+class Transazione
+{
+    public int Id { get; set; }
+    public User? User { get; set; }
+    public DateOnly Data { get; set; }
+    public Abbonamento? Type { get; set; }
+}
+
 class Database : DbContext
 {
     public DbSet<User> Users { get; set; }
     public DbSet<Abbonamento> Abbonamenti { get; set; }
+    public DbSet<Transazione> Transazioni { get; set; }
     protected override void OnConfiguring(DbContextOptionsBuilder option)
     {
         option.UseSqlite("Data Source=db.db");
@@ -55,7 +64,10 @@ class View
         Console.WriteLine("7. Visualizza tipi di abbonamento");
         Console.WriteLine("8. Crea nuovo tipo di abbonamento");
         Console.WriteLine("9. Elimina tipo di abbonamento");
-        Console.WriteLine("10. Esci");
+        Console.WriteLine("10. Crea nuova transazione");
+        Console.WriteLine("11. Elimina transazione");
+        Console.WriteLine("12. Visualizza transazioni");
+        Console.WriteLine("13. Esci");
     }
 
     public void ShowUsers(List<User> users, bool enable)
@@ -79,16 +91,16 @@ class View
         return Console.ReadLine()!;
     }
 
-    internal decimal GePrice()
-    {
-        Console.WriteLine("Insert price:");
-        return Convert.ToDecimal(Console.ReadLine());
-    }
-
     internal void ShowAbbonamenti(List<Abbonamento> abbonamento)
     {
         foreach(var item in abbonamento)
             Console.WriteLine($"Name:\t{item.Name}\tPrice:\t{item.Price}");
+    }
+
+    internal void ShowTransazioni(List<Transazione> transazioni)
+    {
+        foreach(var item in transazioni)
+            Console.WriteLine($"ID:\t{item.Id}\tName:\t{item.Data}\tUser:\t{item.User.Name}\tType:\t{item.Type.Name}");
     }
 }
 
@@ -146,9 +158,76 @@ class Controller
             }
             else if (input == "10")
             {
+                NewTransazione();
+            }
+            else if (input == "11")
+            {
+                DeleteTransazione();
+            }
+            else if (input == "12")
+            {
+                ShowTransazioni();
+            }
+            else if (input == "13")
+            {
                 break;
             }
         }
+    }
+
+    private void ShowTransazioni()
+    {
+        var transazioni = _db.Transazioni.ToList();
+        _view.ShowTransazioni(transazioni);
+    }
+
+    private void DeleteTransazione()
+    {
+        Console.WriteLine("Enter Transazione ID");
+        var id = Convert.ToInt32(_view.GeInput());
+        Transazione TransToDelete = null;
+        foreach(var tran in _db.Transazioni)
+        {
+            if(tran.Id == id)
+            {
+                TransToDelete = tran;
+                break;
+            }
+        }
+        if(TransToDelete != null)
+        {
+            _db.Transazioni.Remove(TransToDelete);
+            _db.SaveChanges();
+        }
+    }
+
+    private void NewTransazione()
+    {
+        Console.WriteLine("Enter user name");
+        var name = _view.GeInput();
+        
+        User UserToSelect = null;
+        foreach(var user in _db.Users)
+        {
+            if(user.Name == name)
+            {
+                UserToSelect = user;
+                break;
+            }
+        }
+        Console.WriteLine("Enter abbonamento type");
+        var type = _view.GeInput();
+        Abbonamento AbbToSelect = null;
+        foreach(var abb in _db.Abbonamenti)
+        {
+            if(abb.Name == type)
+            {
+                AbbToSelect = abb;
+                break;
+            }
+        }        
+        _db.Transazioni.Add( new Transazione { User = UserToSelect, Data = DateOnly.FromDateTime(DateTime.Now), Type = AbbToSelect});
+        _db.SaveChanges();
     }
 
     private void DeleteAbbonamento()
@@ -175,7 +254,8 @@ class Controller
     {
         Console.WriteLine("Enter abbonamento type");
         var name = _view.GeInput();
-        var price = _view.GePrice();
+        Console.WriteLine("Insert price:");
+        var price = Convert.ToDecimal(_view.GeInput());
         _db.Abbonamenti.Add(new Abbonamento { Name = name, Price = price});
         _db.SaveChanges();
     }
