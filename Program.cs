@@ -20,9 +20,17 @@ class User
     public bool Enable { get; set; }
 }
 
+class Abbonamento
+{
+    public int Id { get; set; }
+    public string? Name { get; set; }
+    public decimal Price { get; set; }
+}
+
 class Database : DbContext
 {
     public DbSet<User> Users { get; set; }
+    public DbSet<Abbonamento> Abbonamenti { get; set; }
     protected override void OnConfiguring(DbContextOptionsBuilder option)
     {
         option.UseSqlite("Data Source=db.db");
@@ -40,21 +48,46 @@ class View
     {
         Console.WriteLine("1. Aggiungi user");
         Console.WriteLine("2. Leggi user");
-        Console.WriteLine("3. Modifica user");
-        Console.WriteLine("4. Elimina user");
-        Console.WriteLine("5. Toggle user");
-        Console.WriteLine("6. Esci");
+        Console.WriteLine("3. Leggi disabled user");
+        Console.WriteLine("4. Modifica user");
+        Console.WriteLine("5. Elimina user");
+        Console.WriteLine("6. Toggle user");;
+        Console.WriteLine("7. Visualizza tipi di abbonamento");;
+        Console.WriteLine("8. Crea nuovo tipo di abbonamento");
+        Console.WriteLine("9. Esci");
     }
 
-    public void ShowUsers(List<User> users)
+    public void ShowUsers(List<User> users, bool enable)
     {
         foreach(var user in users)
-            if (user.Enable)
-                Console.WriteLine(user.Name);
+        {
+            if (enable)
+            {
+                if (user.Enable)
+                    Console.WriteLine(user.Name);
+            }
+            else
+            {
+                if (!user.Enable)
+                    Console.WriteLine(user.Name);
+            }
+        }
     }
     public string GeInput()
     {
         return Console.ReadLine()!;
+    }
+
+    internal decimal GePrice()
+    {
+        Console.WriteLine("Insert price:");
+        return Convert.ToDecimal(Console.ReadLine());
+    }
+
+    internal void ShowAbbonamenti(List<Abbonamento> abbonamento)
+    {
+        foreach(var item in abbonamento)
+            Console.WriteLine($"Name:\t{item.Name}\tPrice:\t{item.Price}");
     }
 }
 
@@ -80,26 +113,54 @@ class Controller
             }
             else if (input == "2")
             {
-                ShowUser();
+                ShowUser(true);
             }
             else if (input == "3")
             {
-                UpdateUser();
+                ShowUser(false);
             }
             else if (input == "4")
             {
-                DeleteUser();
+                UpdateUser();
             }
             else if (input == "5")
             {
-                ToggleUser();
+                DeleteUser();
             }
             else if (input == "6")
+            {
+                ToggleUser();
+            }
+            else if (input == "7")
+            {
+                ShowAbbonamenti();
+            }
+            else if (input == "8")
+            {
+                NewAbbonamenti();
+            }
+            else if (input == "9")
             {
                 break;
             }
         }
     }
+
+    private void NewAbbonamenti()
+    {
+        Console.WriteLine("Enter abbonamento type");
+        var name = _view.GeInput();
+        var price = _view.GePrice();
+        _db.Abbonamenti.Add(new Abbonamento { Name = name, Price = price});
+        _db.SaveChanges();
+    }
+
+    private void ShowAbbonamenti()
+    {
+        var abbonamento = _db.Abbonamenti.ToList();
+        _view.ShowAbbonamenti(abbonamento);
+    }
+
     private void AddUser()
     {
         Console.WriteLine("Enter user name");
@@ -107,10 +168,10 @@ class Controller
         _db.Users.Add(new User { Name = name, Enable = true});
         _db.SaveChanges();
     }
-    private void ShowUser()
+    private void ShowUser(bool enable)
     {
         var users = _db.Users.ToList();
-        _view.ShowUsers(users);
+        _view.ShowUsers(users, enable);
     }
     private void UpdateUser()
     {
@@ -168,7 +229,7 @@ class Controller
         }
         if(UserToToggle != null)
         {
-            UserToToggle.Enable=!UserToToggle.Enable;
+            UserToToggle.Enable = !UserToToggle.Enable;
             _db.SaveChanges();
         }
     }
