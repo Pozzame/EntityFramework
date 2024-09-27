@@ -99,8 +99,6 @@ class View
 
     internal void ShowTransazioni(List<Transazione> transazioni)
     {
-        _db.Abbonamenti.ToList();
-        _db.Users.ToList();
         foreach(var item in transazioni)
             Console.WriteLine($"ID:\t{item.Id}\tData:\t{item.Data}\tUser:\t{item.User.Name}\tType:\t{item.Type.Name}");
     }
@@ -179,7 +177,8 @@ class Controller
 
     private void ShowTransazioni()
     {
-        var transazioni = _db.Transazioni.ToList();
+
+        var transazioni = _db.Transazioni.Include(t => t.User).Include(t => t.Type).ToList();
         _view.ShowTransazioni(transazioni);
     }
 
