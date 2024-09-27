@@ -177,8 +177,11 @@ class Controller
 
     private void ShowTransazioni()
     {
-
-        var transazioni = _db.Transazioni.Include(t => t.User).Include(t => t.Type).ToList();
+        
+        _db.Abbonamenti.ToList();
+        _db.Users.ToList();
+        
+        var transazioni = _db.Transazioni./*Include(t => t.User).Include(t => t.Type).*/ToList();
         _view.ShowTransazioni(transazioni);
     }
 
