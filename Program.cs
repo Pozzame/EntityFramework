@@ -6,11 +6,11 @@ class Program
     public static void Main()
     {
         Database db = new Database();
-        View view= new View(db);
+        View view = new View(db);
         Controller controller = new Controller(db, view);
 
         controller.MainMenu();
-    }       
+    }
 }
 
 class User
@@ -51,7 +51,7 @@ class View
     private Database _db;
     public View(Database db)
     {
-        _db=db;
+        _db = db;
     }
     public void ShowMainMenu()
     {
@@ -60,7 +60,7 @@ class View
         Console.WriteLine("3. Leggi disabled user");
         Console.WriteLine("4. Modifica user");
         Console.WriteLine("5. Elimina user");
-        Console.WriteLine("6. Toggle user");;
+        Console.WriteLine("6. Toggle user"); ;
         Console.WriteLine("7. Visualizza tipi di abbonamento");
         Console.WriteLine("8. Crea nuovo tipo di abbonamento");
         Console.WriteLine("9. Elimina tipo di abbonamento");
@@ -72,18 +72,10 @@ class View
 
     public void ShowUsers(List<User> users, bool enable)
     {
-        foreach(var user in users)
+        foreach (var user in users)
         {
-            if (enable)
-            {
-                if (user.Enable)
-                    Console.WriteLine(user.Name);
-            }
-            else
-            {
-                if (!user.Enable)
-                    Console.WriteLine(user.Name);
-            }
+            if (user.Enable == enable)
+                Console.WriteLine(user.Name);
         }
     }
     public string GeInput()
@@ -93,13 +85,13 @@ class View
 
     internal void ShowAbbonamenti(List<Abbonamento> abbonamento)
     {
-        foreach(var item in abbonamento)
+        foreach (var item in abbonamento)
             Console.WriteLine($"Name:\t{item.Name}\tPrice:\t{item.Price}");
     }
 
     internal void ShowTransazioni(List<Transazione> transazioni)
     {
-        foreach(var item in transazioni)
+        foreach (var item in transazioni)
             Console.WriteLine($"ID:\t{item.Id}\tData:\t{item.Data}\tUser:\t{item.User.Name}\tType:\t{item.Type.Name}");
     }
 }
@@ -108,10 +100,10 @@ class Controller
 {
     private Database _db;
     private View _view;
-    public Controller(Database db,View view)
+    public Controller(Database db, View view)
     {
-        _db=db;
-        _view=view;
+        _db = db;
+        _view = view;
     }
 
     public void MainMenu()
@@ -177,10 +169,10 @@ class Controller
 
     private void ShowTransazioni()
     {
-        
+
         _db.Abbonamenti.ToList();
         _db.Users.ToList();
-        
+
         var transazioni = _db.Transazioni./*Include(t => t.User).Include(t => t.Type).*/ToList();
         _view.ShowTransazioni(transazioni);
     }
@@ -190,15 +182,15 @@ class Controller
         Console.WriteLine("Enter Transazione ID");
         var id = Convert.ToInt32(_view.GeInput());
         Transazione TransToDelete = null;
-        foreach(var tran in _db.Transazioni)
+        foreach (var tran in _db.Transazioni)
         {
-            if(tran.Id == id)
+            if (tran.Id == id)
             {
                 TransToDelete = tran;
                 break;
             }
         }
-        if(TransToDelete != null)
+        if (TransToDelete != null)
         {
             _db.Transazioni.Remove(TransToDelete);
             _db.SaveChanges();
@@ -209,11 +201,11 @@ class Controller
     {
         Console.WriteLine("Enter user name");
         var name = _view.GeInput();
-        
+
         User UserToSelect = null;
-        foreach(var user in _db.Users)
+        foreach (var user in _db.Users)
         {
-            if(user.Name == name)
+            if (user.Name == name)
             {
                 UserToSelect = user;
                 break;
@@ -222,15 +214,15 @@ class Controller
         Console.WriteLine("Enter abbonamento type");
         var type = _view.GeInput();
         Abbonamento AbbToSelect = null;
-        foreach(var abb in _db.Abbonamenti)
+        foreach (var abb in _db.Abbonamenti)
         {
-            if(abb.Name == type)
+            if (abb.Name == type)
             {
                 AbbToSelect = abb;
                 break;
             }
-        }        
-        _db.Transazioni.Add( new Transazione { User = UserToSelect, Data = DateOnly.FromDateTime(DateTime.Now), Type = AbbToSelect});
+        }
+        _db.Transazioni.Add(new Transazione { User = UserToSelect, Data = DateOnly.FromDateTime(DateTime.Now), Type = AbbToSelect });
         _db.SaveChanges();
     }
 
@@ -239,15 +231,15 @@ class Controller
         Console.WriteLine("Enter Abbonamento name");
         var name = _view.GeInput();
         Abbonamento AbbToDelete = null;
-        foreach(var abb in _db.Abbonamenti)
+        foreach (var abb in _db.Abbonamenti)
         {
-            if(abb.Name == name)
+            if (abb.Name == name)
             {
                 AbbToDelete = abb;
                 break;
             }
         }
-        if(AbbToDelete != null)
+        if (AbbToDelete != null)
         {
             _db.Abbonamenti.Remove(AbbToDelete);
             _db.SaveChanges();
@@ -260,7 +252,7 @@ class Controller
         var name = _view.GeInput();
         Console.WriteLine("Insert price:");
         var price = Convert.ToDecimal(_view.GeInput());
-        _db.Abbonamenti.Add(new Abbonamento { Name = name, Price = price});
+        _db.Abbonamenti.Add(new Abbonamento { Name = name, Price = price });
         _db.SaveChanges();
     }
 
@@ -274,7 +266,7 @@ class Controller
     {
         Console.WriteLine("Enter user name");
         var name = _view.GeInput();
-        _db.Users.Add(new User { Name = name, Enable = true});
+        _db.Users.Add(new User { Name = name, Enable = true });
         _db.SaveChanges();
     }
     private void ShowUser(bool enable)
@@ -309,15 +301,15 @@ class Controller
         Console.WriteLine("Enter user name");
         var name = _view.GeInput();
         User UserToDelete = null;
-        foreach(var user in _db.Users)
+        foreach (var user in _db.Users)
         {
-            if(user.Name == name)
+            if (user.Name == name)
             {
                 UserToDelete = user;
                 break;
             }
         }
-        if(UserToDelete != null)
+        if (UserToDelete != null)
         {
             _db.Users.Remove(UserToDelete);
             _db.SaveChanges();
@@ -328,15 +320,15 @@ class Controller
         Console.WriteLine("Enter user name");
         var name = _view.GeInput();
         User UserToToggle = null;
-        foreach(var user in _db.Users)
+        foreach (var user in _db.Users)
         {
-            if(user.Name == name)
+            if (user.Name == name)
             {
                 UserToToggle = user;
                 break;
             }
         }
-        if(UserToToggle != null)
+        if (UserToToggle != null)
         {
             UserToToggle.Enable = !UserToToggle.Enable;
             _db.SaveChanges();
