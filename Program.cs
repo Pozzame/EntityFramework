@@ -92,7 +92,7 @@ class View
     internal void ShowTransazioni(List<Transazione> transazioni)
     {
         foreach (var item in transazioni)
-            Console.WriteLine($"ID:\t{item.Id}\tData:\t{item.Data}\tUser:\t{item.User.Name}\tType:\t{item.Type.Name}");
+            Console.WriteLine($"ID:\t{item.Id}\tData:\t{item.Data}\tUser:\t{item.User!.Name}\tType:\t{item.Type!.Name}");
     }
 }
 
@@ -181,7 +181,7 @@ class Controller
     {
         Console.WriteLine("Enter Transazione ID");
         var id = Convert.ToInt32(_view.GeInput());
-        Transazione TransToDelete = null;
+        Transazione? TransToDelete = null;
         foreach (var tran in _db.Transazioni)
         {
             if (tran.Id == id)
@@ -202,7 +202,7 @@ class Controller
         Console.WriteLine("Enter user name");
         var name = _view.GeInput();
 
-        User UserToSelect = null;
+        User? UserToSelect = null;
         foreach (var user in _db.Users)
         {
             if (user.Name == name)
@@ -213,7 +213,7 @@ class Controller
         }
         Console.WriteLine("Enter abbonamento type");
         var type = _view.GeInput();
-        Abbonamento AbbToSelect = null;
+        Abbonamento? AbbToSelect = null;
         foreach (var abb in _db.Abbonamenti)
         {
             if (abb.Name == type)
@@ -230,7 +230,7 @@ class Controller
     {
         Console.WriteLine("Enter Abbonamento name");
         var name = _view.GeInput();
-        Abbonamento AbbToDelete = null;
+        Abbonamento? AbbToDelete = null;
         foreach (var abb in _db.Abbonamenti)
         {
             if (abb.Name == name)
@@ -280,7 +280,7 @@ class Controller
         var oldName = _view.GeInput();
         Console.WriteLine("Enter new user name");
         var newName = _view.GeInput();
-        User user = null;
+        User? user = null;
         foreach (var u in _db.Users)
         {
             if (u.Name == oldName)
@@ -291,7 +291,7 @@ class Controller
         }
         if (user == null)
         {
-            user.Name = newName;
+            user!.Name = newName;
             _db.SaveChanges();
         }
     }
@@ -300,7 +300,7 @@ class Controller
     {
         Console.WriteLine("Enter user name");
         var name = _view.GeInput();
-        User UserToDelete = null;
+        User? UserToDelete = null;
         foreach (var user in _db.Users)
         {
             if (user.Name == name)
@@ -319,7 +319,7 @@ class Controller
     {
         Console.WriteLine("Enter user name");
         var name = _view.GeInput();
-        User UserToToggle = null;
+        User? UserToToggle = null;
         foreach (var user in _db.Users)
         {
             if (user.Name == name)
